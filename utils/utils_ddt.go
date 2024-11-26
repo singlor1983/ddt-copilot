@@ -4,6 +4,7 @@ import (
 	"ddt-copilot/defs"
 	"github.com/lxn/win"
 	"image"
+	"math"
 	"time"
 )
 
@@ -56,4 +57,66 @@ func CaptureWindowLightWithNormalization(hwnd win.HWND, captureRect *win.RECT, d
 		return nil, err
 	}
 	return ConvertToGrayWithNormalization(img), nil
+}
+
+// UpdateAngle 改变力度
+func UpdateAngle(hwnd win.HWND, angle int) {
+	direction := defs.DirectionUp
+	if angle < 0 {
+		direction = defs.DirectionDown
+		angle = int(math.Abs(float64(angle)))
+	}
+	switch direction {
+	case defs.DirectionUp:
+		for i := 0; i < angle; i++ {
+			KeyBoard(hwnd, defs.VK_UP, 0)
+		}
+	case defs.DirectionDown:
+		for i := 0; i < angle; i++ {
+			KeyBoard(hwnd, defs.VK_DOWN, 0)
+		}
+	}
+}
+
+// ConfirmDirection 转向、确认方向
+func ConfirmDirection(hwnd win.HWND, direction defs.Direction) {
+	switch direction {
+	case defs.DirectionLeft:
+		KeyBoard(hwnd, defs.VK_RIGHT, 0)
+		KeyBoard(hwnd, defs.VK_LEFT, 0)
+	case defs.DirectionRight:
+		KeyBoard(hwnd, defs.VK_LEFT, 0)
+		KeyBoard(hwnd, defs.VK_RIGHT, 0)
+	}
+}
+
+// Move 移动。1格距离100毫秒
+func Move(hwnd win.HWND, direction defs.Direction, distance int) {
+	ConfirmDirection(hwnd, direction)
+	if distance < 0 {
+		distance = 0
+	}
+	ts := time.Duration(distance*100) * time.Millisecond
+	switch direction {
+	case defs.DirectionLeft:
+		KeyBoard(hwnd, defs.VK_LEFT, ts)
+	case defs.DirectionRight:
+		KeyBoard(hwnd, defs.VK_RIGHT, ts)
+	}
+}
+
+func UseSkill(hwnd win.HWND, skill uintptr) {
+	KeyBoard(hwnd, skill, 0)
+}
+
+// Launch 攻击、发射，根据力度计算出需要按压持续的时间。1度40毫秒
+func Launch(hwnd win.HWND, power int) {
+	if power < 0 {
+		power = 0
+	}
+	if power > 100 {
+		power = 100
+	}
+	ts := time.Duration(power*40) * time.Millisecond
+	KeyBoard(hwnd, defs.VK_SPACE, ts)
 }

@@ -81,3 +81,25 @@ const (
 	FubenLvHero       FubenLv = 4 // 英雄
 	FubenLvNightmare  FubenLv = 5 // 噩梦
 )
+
+type Direction int
+
+const (
+	DirectionLeft  Direction = 1
+	DirectionRight Direction = 2
+	DirectionUp    Direction = 3
+	DirectionDown  Direction = 4
+)
+
+type FunctionID int
+
+const (
+	FunctionIDFubenBegin FunctionID = 0    // 副本类战斗ID开始
+	FunctionIDFubenEnd   FunctionID = 1000 // 副本类战斗ID结束
+
+	FunctionIDJinjiBegin FunctionID = 1000 // 竞技类战斗ID开始
+	FunctionIDJinjiEnd   FunctionID = 2000 // 竞技类战斗ID结束
+
+	FunctionIDOtherBegin FunctionID = 2000 // 其他功能类脚本ID开始
+	FunctionIDOtherEnd   FunctionID = 3000 // 其他功能类脚本ID开始
+)
