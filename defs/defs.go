@@ -69,5 +69,15 @@ func GetVkFromStr(key string) uintptr {
 }
 
 const (
-	Colorthreshold int = 30
+	Colorthreshold int = 30 // 图片相似度阈值
+)
+
+type FubenLv int
+
+const (
+	FubenLvEasy       FubenLv = 1 // 简单
+	FubenLvNormal     FubenLv = 2 // 普通
+	FubenLvDifficulty FubenLv = 3 // 困难
+	FubenLvHero       FubenLv = 4 // 英雄
+	FubenLvNightmare  FubenLv = 5 // 噩梦
 )

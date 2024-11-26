@@ -41,3 +41,19 @@ func CaptureWindowLight(hwnd win.HWND, captureRect *win.RECT, dropBlock bool) (*
 	FocusDDTWindow(hwnd, dropBlock)
 	return CaptureWindow(hwnd, captureRect)
 }
+
+func CaptureWindowLightWithGray(hwnd win.HWND, captureRect *win.RECT, dropBlock bool) (*image.Gray, error) {
+	img, err := CaptureWindowLight(hwnd, captureRect, dropBlock)
+	if err != nil {
+		return nil, err
+	}
+	return ConvertToGray(img), nil
+}
+
+func CaptureWindowLightWithNormalization(hwnd win.HWND, captureRect *win.RECT, dropBlock bool) (*image.Gray, error) {
+	img, err := CaptureWindowLight(hwnd, captureRect, dropBlock)
+	if err != nil {
+		return nil, err
+	}
+	return ConvertToGrayWithNormalization(img), nil
+}

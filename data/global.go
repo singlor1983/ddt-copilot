@@ -5,8 +5,9 @@ import (
 )
 
 var (
-	GLog       *logger.CustomLogger // 线程安全的全局logger
-	GDefsAngle *DefsAngle           // 角度识别
+	GLog         *logger.CustomLogger // 线程安全的全局logger
+	GDefsAngle   *DefsAngle           // 识别-角度
+	GDefsFubenLv *DefsFubenLv         // 识别-副本难度
 )
 
 func Log() *logger.CustomLogger {
@@ -18,4 +19,7 @@ func InitGlobal() {
 
 	GDefsAngle = &DefsAngle{}
 	GDefsAngle.Init()
+
+	GDefsFubenLv = &DefsFubenLv{}
+	GDefsFubenLv.Init()
 }

@@ -362,3 +362,23 @@ func ToRect(rect *win.RECT) *Rect {
 		H: rect.Bottom - rect.Top,
 	}
 }
+
+func RectToPoint(rect *Rect) Point {
+	if rect == nil {
+		return EmptyPoint
+	}
+	return Point{
+		X: int(rect.X + rect.W/2),
+		Y: int(rect.Y + rect.H/2),
+	}
+}
+
+func WinRectToPoint(rect *win.RECT) Point {
+	if rect == nil {
+		return EmptyPoint
+	}
+	return Point{
+		X: int(rect.Left+rect.Right) / 2,
+		Y: int(rect.Top+rect.Bottom) / 2,
+	}
+}

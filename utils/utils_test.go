@@ -26,17 +26,27 @@ func TestCaptureWindow(t *testing.T) {
 	assert.Equal(t, imgSave.Pix, imgLoadNew.Pix)
 }
 
-func TestSaveAngle(t *testing.T) {
+func TestGenAngle(t *testing.T) {
 	hwnd := GetFirstDDTHwnds()
 
 	i := 91
 	for {
 		fmt.Printf("save: %d\n", i)
-		img, _ := CaptureWindowLight(hwnd, defs.GetWinRect(defs.RectTypeAngle), true)
-		grayImg := ConvertToGrayWithNormalization(img)
+		grayImg, _ := CaptureWindowLightWithNormalization(hwnd, defs.GetWinRect(defs.RectTypeAngle), true)
 		_ = SaveImageToPng(grayImg, fmt.Sprintf("%d", i))
-		_, _ = LoadPngToImage(fmt.Sprintf("%d", i))
 		i++
 		time.Sleep(time.Second * 2)
 	}
+}
+
+func TestGenFubenLv(t *testing.T) {
+	hwnd := GetFirstDDTHwnds()
+
+	i := 0
+	defs.RangeFubenLevelRect(func(rect *defs.Rect) bool {
+		grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(rect), false)
+		_ = SaveImageToPng(grayImg, fmt.Sprintf("f%d", i))
+		i++
+		return false
+	})
 }
