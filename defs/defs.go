@@ -3,7 +3,6 @@ package defs
 type ProcessName string
 
 const (
-	ProcessTg3   ProcessName = "Tango3.exe"
 	ProcessTgWeb ProcessName = "TangoWeb.exe"
 )
 
@@ -68,3 +67,7 @@ func GetVkFromStr(key string) uintptr {
 	}
 	return v
 }
+
+const (
+	Colorthreshold int = 30
+)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"ddt-copilot/defs"
 	"errors"
 	"fmt"
 	"github.com/lxn/win"
@@ -12,6 +13,7 @@ import (
 	"image/color"
 	"image/png"
 	"io"
+	"math"
 	"os"
 	"unsafe"
 )
@@ -23,6 +25,7 @@ var (
 	procPrintWindow = user32.NewProc("PrintWindow")
 )
 
+// CaptureWindow 对整个窗口截图，然后裁剪图像
 func CaptureWindow(hwnd win.HWND, captureRect *win.RECT) (*image.RGBA, error) {
 	hWindowDC := win.GetDC(hwnd)
 	defer win.ReleaseDC(hwnd, hWindowDC)
@@ -245,4 +248,35 @@ func ConvertToGrayWithNormalization(img *image.RGBA) *image.Gray {
 		}
 	}
 	return newImg
+}
+
+func CompareGrayImages(img1, img2 *image.Gray) (float64, error) {
+	if img1.Bounds() != img2.Bounds() {
+		return 0, errors.New("images must have the same dimensions")
+	}
+
+	var matchCount float64
+	width, height := img1.Bounds().Max.X, img1.Bounds().Max.Y
+	pixelCount := float64(width * height)
+
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			gray1 := img1.GrayAt(x, y).Y
+			gray2 := img2.GrayAt(x, y).Y
+			if int(math.Abs(float64(gray1-gray2))) < defs.Colorthreshold {
+				matchCount++
+			}
+		}
+	}
+
+	match := matchCount / pixelCount
+	return match, nil
+}
+
+func IsImageSimilarity(img1, img2 *image.Gray, threshold float64) bool {
+	match, err := CompareGrayImages(img1, img2)
+	if err != nil {
+		return false
+	}
+	return match >= threshold
 }

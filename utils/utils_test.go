@@ -29,15 +29,14 @@ func TestCaptureWindow(t *testing.T) {
 func TestSaveAngle(t *testing.T) {
 	hwnd := GetFirstDDTHwnds()
 
-	i := 0
+	i := 91
 	for {
+		fmt.Printf("save: %d\n", i)
 		img, _ := CaptureWindowLight(hwnd, defs.GetWinRect(defs.RectTypeAngle), true)
 		grayImg := ConvertToGrayWithNormalization(img)
 		_ = SaveImageToPng(grayImg, fmt.Sprintf("%d", i))
-		imgLoad, _ := LoadPngToImage(fmt.Sprintf("%d", i))
-		imgLoadNew := imgLoad.(*image.Gray)
-		println(imgLoadNew)
+		_, _ = LoadPngToImage(fmt.Sprintf("%d", i))
 		i++
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second * 2)
 	}
 }
