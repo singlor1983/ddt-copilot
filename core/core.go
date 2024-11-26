@@ -11,17 +11,17 @@ import (
 )
 
 var (
-	monitorListFightProcess = []defs.DDTElementRectType{
-		defs.DDTElementRectTypeIsYourTurn,
-		defs.DDTElementRectTypeWinOrFail,
+	monitorListFightProcess = []defs.RectType{
+		defs.RectTypeIsYourTurn,
+		defs.RectTypeWinOrFail,
 	}
-	monitorListFubenFanCard = []defs.DDTElementRectType{
-		defs.DDTElementRectTypeFanCardSmall,
-		defs.DDTElementRectTypeFanCardBoss,
+	monitorListFubenFanCard = []defs.RectType{
+		defs.RectTypeFanCardSmall,
+		defs.RectTypeFanCardBoss,
 	}
-	monitorListFubenRoom = []defs.DDTElementRectType{
-		defs.DDTElementRectTypeFubenSelectText,
-		defs.DDTElementRectTypeFubenInviteAndChangeTeam,
+	monitorListFubenRoom = []defs.RectType{
+		defs.RectTypeFubenSelectText,
+		defs.RectTypeFubenInviteAndChangeTeam,
 	}
 )
 
@@ -62,7 +62,7 @@ type ScriptCtrl struct {
 	fixFightCount       int                     // 修正的挑战次数，战斗失败会把这个置为0
 	winCount, failCount int                     // 关卡胜利失败次数
 	roundCount          int                     // 第几次自己的回合出手
-	initPosition        defs.FightInnerPosition // 初始位置
+	initPosition        defs.FightInitPosition  // 初始位置
 	childHWNDs          map[win.HWND]*ChildNode // 小号列表，小号开始运行时加入主号的列表
 
 }
@@ -237,7 +237,7 @@ func (ctrl *ScriptCtrl) monitorFubenFanCard() {
 }
 
 // Monitor 每秒只截屏一次，然后从这张图里面再截取对应的部分，而不是每次重新截屏
-func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.DDTElementRectType) {
+func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.RectType) {
 	time.Sleep(time.Millisecond * 500)
 	img, err := utils.CaptureWindowLight(ctrl.hwnd, nil, true)
 	if err != nil {
@@ -259,7 +259,7 @@ func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.DDTElementRectType) {
 	//log.Println("截图成功，已保存为 fubenleveltmp.png")
 	for _, rectType := range nextMonitorList { // case的先后顺序有严格要求
 		switch rectType {
-		case defs.DDTElementRectTypeIsYourTurn: // 以下每个分支下的return必不可少，不然可能造成混乱，多个监听
+		case defs.RectTypeIsYourTurn: // 以下每个分支下的return必不可少，不然可能造成混乱，多个监听
 			if utils.InSenseIsYourTurn(ctrl.hwnd, img) { // 监听：轮到你出手了
 				fmt.Printf("time:%s in your turn\n", time.Now().Format(time.TimeOnly))
 				ctrl.roundCount++
@@ -272,7 +272,7 @@ func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.DDTElementRectType) {
 				ctrl.monitorFightProcess()
 				return
 			}
-		case defs.DDTElementRectTypeWinOrFail:
+		case defs.RectTypeWinOrFail:
 			if utils.InSenseFightWin(ctrl.hwnd, img) { // 战斗结算页面-胜利，最后一关打完才有，小关是直接翻牌了
 				fmt.Printf("time:%s fight win\n", time.Now().Format(time.TimeOnly))
 				ctrl.winCount++
@@ -285,7 +285,7 @@ func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.DDTElementRectType) {
 				ctrl.monitorFubenFanCard()
 				return
 			}
-		case defs.DDTElementRectTypeFanCardSmall, defs.DDTElementRectTypeFanCardBoss: // 小关翻牌、boss翻牌
+		case defs.RectTypeFanCardSmall, defs.RectTypeFanCardBoss: // 小关翻牌、boss翻牌
 			if utils.InSenseFubenFanCardSmall(ctrl.hwnd, img) {
 				fmt.Printf("time:%s fan card small\n", time.Now().Format(time.TimeOnly))
 				// Todo add 翻牌逻辑
@@ -297,7 +297,7 @@ func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.DDTElementRectType) {
 				ctrl.monitorFubenRoom()
 				return
 			}
-		case defs.DDTElementRectTypeFubenSelectText: // 有这个select必然重新选择副本并开始
+		case defs.RectTypeFubenSelectText: // 有这个select必然重新选择副本并开始
 			if utils.InSenseFubenSelectText(ctrl.hwnd, img) {
 				fmt.Printf("time:%s select fuben\n", time.Now().Format(time.TimeOnly))
 				if ctrl.isChild {
@@ -313,7 +313,7 @@ func (ctrl *ScriptCtrl) Monitor(nextMonitorList []defs.DDTElementRectType) {
 				}
 				return
 			}
-		case defs.DDTElementRectTypeFubenInviteAndChangeTeam: // 先判断select再判断，副本房间特征元素，这样能保证需要选择副本的时候必然可以选择副本 Todo 可能不能这么快就开始，要等小号都准备。小号也不能点击开始和选择副本
+		case defs.RectTypeFubenInviteAndChangeTeam: // 先判断select再判断，副本房间特征元素，这样能保证需要选择副本的时候必然可以选择副本 Todo 可能不能这么快就开始，要等小号都准备。小号也不能点击开始和选择副本
 			if utils.InSenseFubenInviteAndChangeTeam(ctrl.hwnd, img) {
 				fmt.Printf("time:%s direct enter fuben\n", time.Now().Format(time.TimeOnly))
 				if ctrl.isChild {

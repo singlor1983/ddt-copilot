@@ -44,3 +44,11 @@ func Launch(hwnd win.HWND, needAngle, power int) {
 	utils.UpdateAngle(hwnd, needAngle-num)
 	utils.Launch(hwnd, power)
 }
+
+func OnRoundInitMaYiGeneral(ctrl *ScriptCtrl) {
+
+}
+
+func OnBattleMaYiGeneral(ctrl *ScriptCtrl) {
+
+}

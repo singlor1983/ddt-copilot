@@ -73,7 +73,7 @@ func DoHandleFirstRoundInit(ctrl *ScriptCtrl) {
 }
 
 func Init() {
-	//RegisterHandle(defs.FubenIDMY, OnBeforeStartMY, OnFirstRoundInitMY, OnFightMY)
+	RegisterHandle(defs.FunctionIDMaYiGeneral, nil, OnRoundInitMaYiGeneral, OnBattleMaYiGeneral)
 	//RegisterHandle(defs.FubenIDXSZY, nil, nil, OnFightXSZY)
 	//RegisterHandle(defs.FubenIDBG, nil, OnFirstRoundInitBG, OnFightBG)
 }

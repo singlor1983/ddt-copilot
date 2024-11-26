@@ -94,12 +94,29 @@ const (
 type FunctionID int
 
 const (
-	FunctionIDFubenBegin FunctionID = 0    // 副本类战斗ID开始
-	FunctionIDFubenEnd   FunctionID = 1000 // 副本类战斗ID结束
+	FunctionIDFubenBegin  FunctionID = 0    // 副本类战斗ID开始
+	FunctionIDMaYiGeneral FunctionID = 1    // 蚂蚁-经典
+	FunctionIDFubenEnd    FunctionID = 1000 // 副本类战斗ID结束
 
 	FunctionIDJinjiBegin FunctionID = 1000 // 竞技类战斗ID开始
 	FunctionIDJinjiEnd   FunctionID = 2000 // 竞技类战斗ID结束
 
 	FunctionIDOtherBegin FunctionID = 2000 // 其他功能类脚本ID开始
 	FunctionIDOtherEnd   FunctionID = 3000 // 其他功能类脚本ID开始
+)
+
+type ReadyState int
+
+const (
+	ReadyStateNo ReadyState = 0 // 未准备
+	ReadyStateOK ReadyState = 1 // 已准备
+)
+
+type FightInitPosition int
+
+const (
+	FightInitPosition1 FightInitPosition = 1
+	FightInitPosition2 FightInitPosition = 2
+	FightInitPosition3 FightInitPosition = 3
+	FightInitPosition4 FightInitPosition = 4
 )
