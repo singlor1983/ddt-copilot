@@ -121,16 +121,18 @@ func Launch(hwnd win.HWND, power int) {
 	KeyBoard(hwnd, defs.VK_SPACE, ts)
 }
 
-func LeftClickRect(hwnd win.HWND, tp defs.RectType, duration time.Duration) {
+func LeftClickRect(hwnd win.HWND, tp defs.RectType, wait time.Duration) {
 	rect := defs.GetWinRect(tp)
 	if rect == nil {
 		return
 	}
 	point := defs.WinRectToPoint(rect)
-	LeftClick(hwnd, point.X, point.Y, duration)
+	LeftClick(hwnd, point.X, point.Y, 0)
+	time.Sleep(wait)
 }
 
-func LeftClickPoint(hwnd win.HWND, tp defs.ElementPoint, duration time.Duration) {
+func LeftClickPoint(hwnd win.HWND, tp defs.ElementPoint, wait time.Duration) {
 	point := defs.GetPoint(tp)
-	LeftClick(hwnd, point.X, point.Y, duration)
+	LeftClick(hwnd, point.X, point.Y, 0)
+	time.Sleep(wait)
 }

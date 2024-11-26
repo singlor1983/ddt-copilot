@@ -1,5 +1,7 @@
 package defs
 
+import "time"
+
 type ProcessName string
 
 const (
@@ -112,11 +114,17 @@ const (
 	ReadyStateOK ReadyState = 1 // 已准备
 )
 
-type FightInitPosition int
+type InitPosition int
 
 const (
-	FightInitPosition1 FightInitPosition = 1
-	FightInitPosition2 FightInitPosition = 2
-	FightInitPosition3 FightInitPosition = 3
-	FightInitPosition4 FightInitPosition = 4
+	InitPosition1 InitPosition = 1
+	InitPosition2 InitPosition = 2
+	InitPosition3 InitPosition = 3
+	InitPosition4 InitPosition = 4
+)
+
+const (
+	ClickWaitLong  = time.Millisecond * 2000 // 长久等待，比如切换场景，从大厅->副本房间内
+	ClickWaitMid   = time.Millisecond * 700  // 中等等待，点击后的停顿，这个时间刚好够人类反应了
+	ClickWaitShort = time.Millisecond * 150  // 短暂等待，比如准备副本道具
 )

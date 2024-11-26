@@ -50,3 +50,53 @@ func TestGenFubenLv(t *testing.T) {
 		return false
 	})
 }
+
+func TestGenOther(t *testing.T) {
+	//hwnd := GetFirstDDTHwnds()
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectPassBtn), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("pbtn"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFubenSelectText), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fst"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFubenInviteAndChangeTeam), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fiact"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectJinjiInviteAndChangeArea), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("jiaca1"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectJinjiInviteAndChangeArea), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("jiaca2"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFubenHall), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fh"))
+	//
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectJinjiHall), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("jh"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFightRightTop), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("frt"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFightResult), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fr"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFightLoading), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fl1"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFightLoading), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fl2"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectFubenFightSettle), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("ffs")) // 就是翻牌界面，小关需要手动翻牌，竞技用的就是小关
+	//
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectJinjiFightSettle), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("jfs")) // 就是翻牌界面，小关需要手动翻牌，竞技用的就是小关
+	//
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectBackAndExit), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("back"))
+	//
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectBackAndExit), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("exit"))
+	//
+}

@@ -281,11 +281,11 @@ const (
 	RectTypeJinjiFightLoading         RectType = 209 // 竞技战斗加载特征元素【自由战】
 	RectTypeFubenFightSettle          RectType = 210 // 副本战斗结算特征元素【游戏结算，左上角】也是boss关翻牌画面
 	RectTypeJinjiFightSettle          RectType = 211 // 竞技战斗结算特征元素【游戏结算，右上角】也是小关翻牌画面
-	RectTypeSenseMan                  RectType = 300
+	RectTypeSenseMax                  RectType = 300
 )
 
 func RangeSenseRect(cb func(RectType) bool) {
-	for i := RectTypeSenseMin + 1; i < RectTypeSenseMan; i++ {
+	for i := RectTypeSenseMin + 1; i < RectTypeSenseMax; i++ {
 		if cb(i) {
 			break
 		}
