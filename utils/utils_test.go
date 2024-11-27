@@ -52,7 +52,22 @@ func TestGenFubenLv(t *testing.T) {
 }
 
 func TestGenOther(t *testing.T) {
-	//hwnd := GetFirstDDTHwnds()
+	hwnd := GetFirstDDTHwnds()
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectWinOrFailFight), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fwin"))
+
+	grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectWinOrFailFight), false)
+	_ = SaveImageToPng(grayImg, fmt.Sprintf("ffail"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectWinOrFailSettle), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("win"))
+	//
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectWinOrFailSettle), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("fail"))
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectIsYourTurn), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("iyt"))
 
 	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectPassBtn), false)
 	//_ = SaveImageToPng(grayImg, fmt.Sprintf("pbtn"))
@@ -99,4 +114,7 @@ func TestGenOther(t *testing.T) {
 	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectBackAndExit), false)
 	//_ = SaveImageToPng(grayImg, fmt.Sprintf("exit"))
 	//
+
+	//grayImg, _ := CaptureWindowLightWithGray(hwnd, defs.ToWinRect(defs.RectBackAndExit), false)
+	//_ = SaveImageToPng(grayImg, fmt.Sprintf("index"))
 }

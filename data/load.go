@@ -21,23 +21,23 @@ func (self *DefsAngle) Init() {
 	for angle := -40; angle <= 90; angle++ {
 		img, err := utils.LoadPngToImage(fmt.Sprintf("%s%d", imgPath, angle))
 		if err != nil || img == nil {
-			Log().Error().Err(err).Int("angle", angle).Msg("DefsAngle.Init, LoadPngToImage failed")
+			Log().Error().Timestamp().Err(err).Int("angle", angle).Msg("load DefsAngle failed, load png failed")
 			continue
 		}
 		v, ok := img.(*image.Gray)
 		if !ok {
-			Log().Error().Err(err).Int("angle", angle).Msg("DefsAngle.Init, img is not *image.Gray")
+			Log().Error().Timestamp().Err(err).Int("angle", angle).Msg("load DefsAngle failed, img is not *image.Gray")
 			continue
 		}
 		items[angle] = v
-		Log().Info().Int("angle", angle).Msg("DefsAngle.Init, load success")
+		Log().Info().Timestamp().Int("angle", angle).Msg("load DefsAngle success")
 	}
 	self.items = items
 }
 
 func (self *DefsAngle) GetAngle(hwnd win.HWND) (int, error) {
-	standard, _ := utils.CaptureWindowLightWithNormalization(hwnd, defs.GetWinRect(defs.RectTypeAngle), true)
-	for angle, gray := range self.items {
+	gray, _ := utils.CaptureWindowLightWithNormalization(hwnd, defs.GetWinRect(defs.RectTypeAngle), true)
+	for angle, standard := range self.items {
 		if gray == nil {
 			continue
 		}
@@ -57,52 +57,36 @@ func (self *DefsFubenLv) Init() {
 	for lv := defs.FubenLvEasy; lv <= defs.FubenLvHero; lv++ {
 		img, err := utils.LoadPngToImage(fmt.Sprintf("%sf%d", imgPath, lv))
 		if err != nil || img == nil {
-			Log().Error().Err(err).Int("lv", int(lv)).Msg("DefsFubenLv.Init, LoadPngToImage failed")
+			Log().Error().Timestamp().Err(err).Int("lv", int(lv)).Msg("load DefsFubenLv failed, load png failed")
 			continue
 		}
 		v, ok := img.(*image.Gray)
 		if !ok {
-			Log().Error().Err(err).Int("lv", int(lv)).Msg("DefsFubenLv.Init, img is not *image.Gray")
+			Log().Error().Timestamp().Err(err).Int("lv", int(lv)).Msg("load DefsFubenLv failed, img is not *image.Gray")
 			continue
 		}
 		items[lv] = v
-		Log().Info().Int("lv", int(lv)).Msg("DefsFubenLv.Init, load success")
+		Log().Info().Timestamp().Int("lv", int(lv)).Msg("load DefsFubenLv success")
 	}
 	self.items = items
 }
 
-func (self *DefsFubenLv) GetPoint(hwnd win.HWND, lv defs.FubenLv) (defs.Point, error) {
-	standard, ok := self.items[lv]
-	if !ok {
-		return defs.EmptyPoint, fmt.Errorf("not found lv：%d", lv)
-	}
-	var point defs.Point
-	defs.RangeFubenLevelRect(func(rect *defs.Rect) bool {
-		gray, err := utils.CaptureWindowLightWithGray(hwnd, defs.ToWinRect(rect), false)
-		if err != nil {
-			Log().Error().Err(err).Int("lv", int(lv)).Msg("DefsFubenLv.GetPoint, CaptureWindowLightWithGray failed")
-			return false
-		}
-		if !utils.IsImageSimilarity(standard, gray, 0.9) {
-			return false
-		}
-		point = defs.RectToPoint(rect)
-		return true
-	})
-	return point, nil
+func (self *DefsFubenLv) GetStandard(lv defs.FubenLv) *image.Gray {
+	standard, _ := self.items[lv]
+	return standard
 }
 
-type DefsConstants struct {
+type DefsOther struct {
 	items map[defs.RectType]*image.Gray
 }
 
-func (self *DefsConstants) load(tp defs.RectType, name string, items map[defs.RectType]*image.Gray) {
+func (self *DefsOther) load(tp defs.RectType, name string, items map[defs.RectType]*image.Gray) {
 	var err error
 	defer func() {
 		if err != nil {
-			Log().Error().Err(err).Int("tp", int(tp)).Str("name", name).Msg("DefsConstants.load failed")
+			Log().Error().Timestamp().Err(err).Int("type", int(tp)).Str("name", name).Msg("load DefsOther failed")
 		} else {
-			Log().Info().Err(err).Int("tp", int(tp)).Str("name", name).Msg("DefsConstants.load success")
+			Log().Info().Timestamp().Err(err).Int("type", int(tp)).Str("name", name).Msg("load DefsOther success")
 		}
 	}()
 
@@ -112,14 +96,14 @@ func (self *DefsConstants) load(tp defs.RectType, name string, items map[defs.Re
 	}
 	v, ok := img.(*image.Gray)
 	if !ok {
-		err = fmt.Errorf("not gray image")
+		err = fmt.Errorf("img is not *image.Gray")
 		return
 	}
 
 	items[tp] = v
 }
 
-func (self *DefsConstants) Init() {
+func (self *DefsOther) Init() {
 	items := make(map[defs.RectType]*image.Gray)
 	self.load(defs.RectTypePassBtn, "pbtn", items)
 	self.load(defs.RectTypeFubenSelectText, "fst", items)
@@ -136,31 +120,19 @@ func (self *DefsConstants) Init() {
 	self.load(defs.RectTypeJinjiFightSettle, "jfs", items)
 	self.load(defs.RectTypeBack, "back", items)
 	self.load(defs.RectTypeExit, "exit", items)
+	self.load(defs.RectTypeIndexPage, "index", items)
+	self.load(defs.RectTypeIsYourTurn, "iyt", items)
+	self.load(defs.RectTypeSettleWin, "win", items)
+	self.load(defs.RectTypeSettleFail, "fail", items)
+	self.load(defs.RectTypeFightWin, "fwin", items)
+	self.load(defs.RectTypeFightFail, "ffail", items)
 
 	self.items = items
-
-	self.BackToIndexPage(31065808)
 }
 
-func (self *DefsConstants) BackToIndexPage(hwnd win.HWND) {
-	standard := self.items[defs.RectTypeBack]
-	if standard == nil {
-		return
-	}
-	for {
-		rect := defs.GetWinRect(defs.RectTypeBack)
-		if rect == nil {
-			return
-		}
-		gray, err := utils.CaptureWindowLightWithGray(hwnd, rect, true)
-		if err != nil {
-			return
-		}
-		if !utils.IsImageSimilarity(standard, gray, 0.9) {
-			break
-		}
-		utils.LeftClickPoint(hwnd, defs.PointBackAndExit, defs.ClickWaitLong)
-	}
+func (self *DefsOther) GetStandard(tp defs.RectType) *image.Gray {
+	standard := self.items[tp]
+	return standard
 }
 
 func Init() {

@@ -98,11 +98,17 @@ var (
 		W: 100,
 		H: 25,
 	}
-	RectWinOrFail = &Rect{
+	RectWinOrFailSettle = &Rect{
 		X: 821,
 		Y: 13,
 		W: 155,
 		H: 104,
+	}
+	RectWinOrFailFight = &Rect{
+		X: 400,
+		Y: 190,
+		W: 30,
+		H: 20,
 	}
 	RectFightReady = &Rect{
 		X: 893,
@@ -264,10 +270,13 @@ const (
 	RectTypeExit            RectType = 105 // 退出
 	RectTypeMiniMap         RectType = 106 // 小地图
 	RectTypeIsYourTurn      RectType = 107 // 轮到你出手了
-	RectTypeWinOrFail       RectType = 108 // 结算画面 胜利-失败
-	RectTypeFanCardSmall    RectType = 109 // 翻牌画面 小关翻牌
-	RectTypeFanCardBoss     RectType = 110 // 翻牌画面 boss翻牌
-	RectTypeFightReady      RectType = 111 // 房间内【已准备-显示取消，未准备-显示准备】
+	RectTypeSettleWin       RectType = 108 // 结算画面 胜利【出现这个画面表示副本完整的结束了，即boss关打完或者失败】
+	RectTypeSettleFail      RectType = 109 // 结算画面 失败【出现这个画面表示副本完整的结束了，即boss关打完或者失败】
+	RectTypeFanCardSmall    RectType = 110 // 翻牌画面 小关翻牌
+	RectTypeFanCardBoss     RectType = 111 // 翻牌画面 boss翻牌
+	RectTypeFightReady      RectType = 112 // 房间内【已准备-显示取消，未准备-显示准备】
+	RectTypeFightWin        RectType = 113 // 战斗结束 胜利【每一小关都会出现，比结算画面先出现】
+	RectTypeFightFail       RectType = 114 // 战斗结束 失败【每一小关都会出现，比结算画面先出现】
 
 	RectTypeSenseMin                  RectType = 200
 	RectTypeFubenInviteAndChangeTeam  RectType = 201 // 副本房间的特征元素【邀请&换队】
@@ -281,6 +290,7 @@ const (
 	RectTypeJinjiFightLoading         RectType = 209 // 竞技战斗加载特征元素【自由战】
 	RectTypeFubenFightSettle          RectType = 210 // 副本战斗结算特征元素【游戏结算，左上角】也是boss关翻牌画面
 	RectTypeJinjiFightSettle          RectType = 211 // 竞技战斗结算特征元素【游戏结算，右上角】也是小关翻牌画面
+	RectTypeIndexPage                 RectType = 212 // 游戏index页面
 	RectTypeSenseMax                  RectType = 300
 )
 
@@ -314,9 +324,13 @@ var elementRect = map[RectType]*Rect{
 	RectTypeFubenSelectText:           RectFubenSelectText,
 	RectTypeBack:                      RectBackAndExit,
 	RectTypeExit:                      RectBackAndExit,
+	RectTypeIndexPage:                 RectBackAndExit,
 	RectTypeMiniMap:                   RectMiniMap,
 	RectTypeIsYourTurn:                RectIsYourTurn,
-	RectTypeWinOrFail:                 RectWinOrFail,
+	RectTypeSettleWin:                 RectWinOrFailSettle,
+	RectTypeSettleFail:                RectWinOrFailSettle,
+	RectTypeFightWin:                  RectWinOrFailFight,
+	RectTypeFightFail:                 RectWinOrFailFight,
 	RectTypeFightReady:                RectFightReady,
 	RectTypeFubenInviteAndChangeTeam:  RectFubenInviteAndChangeTeam,
 	RectTypeJinjiInviteAndChangeArea1: RectJinjiInviteAndChangeArea,

@@ -39,10 +39,14 @@ func UseSkillByConfig(hwnd win.HWND) {
 func Launch(hwnd win.HWND, needAngle, power int) {
 	num, err := data.GDefsAngle.GetAngle(hwnd)
 	if err != nil {
-		data.Log().Error().Err(err).Int("hwnd", int(hwnd)).Msg("Launch, GetAngle failed")
+		data.Log().Error().Timestamp().Timestamp().Err(err).Int("hwnd", int(hwnd)).Msg("launch failed")
 	}
 	utils.UpdateAngle(hwnd, needAngle-num)
 	utils.Launch(hwnd, power)
+}
+
+func OnBattleCustom(ctrl *ScriptCtrl) {
+
 }
 
 func OnRoundInitMaYiGeneral(ctrl *ScriptCtrl) {

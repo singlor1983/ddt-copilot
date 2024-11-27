@@ -97,7 +97,8 @@ type FunctionID int
 
 const (
 	FunctionIDFubenBegin  FunctionID = 0    // 副本类战斗ID开始
-	FunctionIDMaYiGeneral FunctionID = 1    // 蚂蚁-经典
+	FunctionIDCustomFuben FunctionID = 1    // 自定义副本
+	FunctionIDMaYiGeneral FunctionID = 2    // 蚂蚁-经典
 	FunctionIDFubenEnd    FunctionID = 1000 // 副本类战斗ID结束
 
 	FunctionIDJinjiBegin FunctionID = 1000 // 竞技类战斗ID开始
@@ -124,7 +125,20 @@ const (
 )
 
 const (
-	ClickWaitLong  = time.Millisecond * 2000 // 长久等待，比如切换场景，从大厅->副本房间内
-	ClickWaitMid   = time.Millisecond * 700  // 中等等待，点击后的停顿，这个时间刚好够人类反应了
-	ClickWaitShort = time.Millisecond * 150  // 短暂等待，比如准备副本道具
+	TimeWaitLong  = time.Millisecond * 2000 // 长久等待，比如切换场景，从大厅->副本房间内
+	TimeWaitMid   = time.Millisecond * 700  // 中等等待，点击后的停顿，这个时间刚好够人类反应了
+	TimeWaitShort = time.Millisecond * 150  // 短暂等待，比如准备副本道具
 )
+
+type FubenType int
+
+const (
+	FubenTypeNormal  FubenType = 0 // 普通副本
+	FubenTypeSpecial FubenType = 1 // 特殊副本
+)
+
+type FubenPosition struct {
+	Type  FubenType
+	Page  int
+	Index RectType // 1-8
+}

@@ -33,47 +33,48 @@ func RegisterHandle(id defs.FunctionID, cbBeforeStart beforeStartCB, cbFirstRoun
 	}
 }
 
-func DoHandleBeforeStart(ctrl *ScriptCtrl) {
+func findHandle(id defs.FunctionID) (*handleNode, error) {
 	if handles == nil {
-		panic("handles nil")
+		return nil, fmt.Errorf("handles nil")
 	}
-	v := handles[ctrl.scriptIndex]
+	v := handles[id]
 	if v == nil {
-		panic(fmt.Sprintf("not found id:%d", v.id))
+		return nil, fmt.Errorf("not found id:%d", v.id)
 	}
-	if v.cbBeforeStart != nil {
-		v.cbBeforeStart(ctrl)
+	return v, nil
+}
+
+func DoHandleBeforeStart(ctrl *ScriptCtrl) {
+	handler, err := findHandle(ctrl.id)
+	if err != nil {
+		panic(err)
+	}
+	if handler.cbBeforeStart != nil {
+		handler.cbBeforeStart(ctrl)
 	}
 }
 
 func DoHandleFight(ctrl *ScriptCtrl) {
-	if handles == nil {
-		panic("handles nil")
+	handler, err := findHandle(ctrl.id)
+	if err != nil {
+		panic(err)
 	}
-	v := handles[ctrl.scriptIndex]
-	if v == nil {
-		panic(fmt.Sprintf("not found id:%d", v.id))
-	}
-	if v.cbFight != nil {
-		v.cbFight(ctrl)
+	if handler.cbFight != nil {
+		handler.cbFight(ctrl)
 	}
 }
 
 func DoHandleFirstRoundInit(ctrl *ScriptCtrl) {
-	if handles == nil {
-		panic("handles nil")
+	handler, err := findHandle(ctrl.id)
+	if err != nil {
+		panic(err)
 	}
-	v := handles[ctrl.scriptIndex]
-	if v == nil {
-		panic(fmt.Sprintf("not found id:%d", v.id))
-	}
-	if v.cbFirstRoundInit != nil {
-		v.cbFirstRoundInit(ctrl)
+	if handler.cbFirstRoundInit != nil {
+		handler.cbFirstRoundInit(ctrl)
 	}
 }
 
 func Init() {
+	RegisterHandle(defs.FunctionIDCustomFuben, nil, nil, OnBattleCustom)
 	RegisterHandle(defs.FunctionIDMaYiGeneral, nil, OnRoundInitMaYiGeneral, OnBattleMaYiGeneral)
-	//RegisterHandle(defs.FubenIDXSZY, nil, nil, OnFightXSZY)
-	//RegisterHandle(defs.FubenIDBG, nil, OnFirstRoundInitBG, OnFightBG)
 }
