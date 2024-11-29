@@ -142,3 +142,9 @@ type FubenPosition struct {
 	Page  int
 	Index RectType // 1-8
 }
+
+type FubenSetting struct {
+	Lv                FubenLv // 副本难度
+	IsBossFightEnable bool    // 是否启用boss战
+	FubenPosition
+}

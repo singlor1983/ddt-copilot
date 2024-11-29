@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	defaultAttackList = []string{"2", "3",
+	defaultAttackList = []string{"E", "2", "3",
 		"4", "4", "4", "4", "4", "4", "4", "4",
 		"5", "5", "5", "5", "5", "5", "5", "5",
 		"6", "6", "6", "6", "6", "6", "6", "6",
@@ -16,7 +16,7 @@ var (
 		"8", "8", "8", "8", "8", "8", "8", "8"} // 默认的攻击指令
 )
 
-func GetAttackCmd() []uintptr {
+func GetAttackCMD() []uintptr {
 	var cmds []uintptr
 	attackCmd := data.GGameSetting.SettingGeneral.AttackCMD
 	if len(attackCmd) == 0 {
@@ -30,7 +30,7 @@ func GetAttackCmd() []uintptr {
 }
 
 func UseSkillByConfig(hwnd win.HWND) {
-	cmds := GetAttackCmd()
+	cmds := GetAttackCMD()
 	for _, cmd := range cmds {
 		utils.UseSkill(hwnd, cmd)
 	}
@@ -41,12 +41,26 @@ func Launch(hwnd win.HWND, needAngle, power int) {
 	if err != nil {
 		data.Log().Error().Timestamp().Timestamp().Err(err).Int("hwnd", int(hwnd)).Msg("launch failed")
 	}
-	utils.UpdateAngle(hwnd, needAngle-num)
+	diff := needAngle - num
+	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Int("captureNum", num).Int("diff", diff).
+		Int("needAngle", needAngle).Int("power", power).Msg("launch")
+	utils.UpdateAngle(hwnd, diff)
 	utils.Launch(hwnd, power)
 }
 
 func OnBattleCustom(ctrl *ScriptCtrl) {
+	utils.ConfirmDirection(ctrl.hwnd, data.GGameSetting.SettingFubenCustom.Direction)
 
+	attackCmd := data.GGameSetting.SettingFubenCustom.AttackCMD
+	if len(attackCmd) == 0 {
+		attackCmd = defaultAttackList
+	}
+	for _, s := range attackCmd {
+		vk := defs.GetVkFromStr(s)
+		utils.UseSkill(ctrl.hwnd, vk)
+	}
+
+	Launch(ctrl.hwnd, data.GGameSetting.SettingFubenCustom.Angle, data.GGameSetting.SettingFubenCustom.Power)
 }
 
 func OnRoundInitMaYiGeneral(ctrl *ScriptCtrl) {

@@ -14,8 +14,8 @@ import (
 var (
 	monitorListFightProcess = []defs.RectType{
 		defs.RectTypeIsYourTurn,
-		defs.RectTypeSettleWin,
-		defs.RectTypeSettleFail,
+		defs.RectTypeFightWin,
+		defs.RectTypeFightFail,
 	}
 	monitorListFubenFanCard = []defs.RectType{
 		defs.RectTypeFanCardSmall,
@@ -40,13 +40,13 @@ type ScriptCtrl struct {
 	isrunning bool // 是否正在运行
 
 	// 内存数据
-	fightCount          int                 // 已挑战了多少次关卡
-	fixFightCount       int                 // 修正的挑战次数，战斗失败会把这个置为0
-	winCount, failCount int                 // 关卡胜利失败次数
-	roundCount          int                 // 第几次自己的回合出手
-	initPosition        defs.InitPosition   // 初始位置
-	childs              utils.Set[win.HWND] // 小号列表，小号开始运行时加入主号的列表
-	readyState          defs.ReadyState     // 是否已准备，副本结束时需要重置状态
+	fightCount                      int                 // 总关卡挑战次数
+	settleWinCount, settleFailCount int                 // 最终结算的胜利失败次数
+	fightWinCount, fightFailCount   int                 // 小关的胜利失败次数
+	roundCount                      int                 // 第几次自己的回合出手
+	initPosition                    defs.InitPosition   // 初始位置
+	childs                          utils.Set[win.HWND] // 小号列表，小号开始运行时加入主号的列表
+	readyState                      defs.ReadyState     // 是否已准备，副本结束时需要重置状态
 }
 
 func NewScriptCtrl(hwnd, master win.HWND, id defs.FunctionID, lv defs.FubenLv, isChild, isBossFight bool) *ScriptCtrl {
@@ -130,7 +130,7 @@ func (self *ScriptCtrl) tryReady() {
 	data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Msg("set ready ok")
 }
 
-func (self *ScriptCtrl) SelectFubenMap() {
+func (self *ScriptCtrl) GetFubenPosition() defs.FubenSetting {
 	lv := self.lv
 	isBossFight := self.isBossFight
 	position := data.GGameSetting.SettingFubenPosition.Position[self.id]
@@ -138,12 +138,21 @@ func (self *ScriptCtrl) SelectFubenMap() {
 		lv = data.GGameSetting.SettingFubenCustom.Lv
 		isBossFight = data.GGameSetting.SettingFubenCustom.IsBossFightEnable
 		position = defs.FubenPosition{
-			Type:  data.GGameSetting.SettingFubenCustom.Tp,
+			Type:  data.GGameSetting.SettingFubenCustom.Type,
 			Page:  data.GGameSetting.SettingFubenCustom.Page,
 			Index: data.GGameSetting.SettingFubenCustom.Index,
 		}
 	}
-	if err := SelectFubenMap(self.hwnd, lv, isBossFight, position); err != nil {
+	return defs.FubenSetting{
+		Lv:                lv,
+		IsBossFightEnable: isBossFight,
+		FubenPosition:     position,
+	}
+}
+
+func (self *ScriptCtrl) SelectFubenMap() {
+	setting := self.GetFubenPosition()
+	if err := SelectFubenMap(self.hwnd, setting.Lv, setting.IsBossFightEnable, setting.FubenPosition); err != nil {
 		panic(err)
 	}
 }
@@ -181,8 +190,7 @@ func (self *ScriptCtrl) waitChildReady() {
 
 func (self *ScriptCtrl) StartFuben() {
 	self.waitChildReady()
-	self.fightCount++ // 重新启动脚本自然会重置【重启脚本需要重新初始化ScriptCtrl】
-	self.fixFightCount++
+	self.fightCount++   // 重新启动脚本自然会重置【重启脚本需要重新初始化ScriptCtrl】
 	self.roundCount = 0 // 每次新开战斗要重置回合次数
 	ClickFubenStart(self.hwnd)
 	ClickFubenStartAck(self.hwnd) // 多人战斗的时候没有确认框，但是点击一下也不影响
@@ -203,7 +211,7 @@ func (self *ScriptCtrl) Monitor(nextMonitorList []defs.RectType) {
 	for _, rectType := range nextMonitorList { // case的先后顺序有严格要求
 		standard := data.GDefsOther.GetStandard(rectType)
 		switch rectType {
-		case defs.RectTypeIsYourTurn: // 以下每个分支下的return必不可少，不然可能造成混乱，多个监听
+		case defs.RectTypeIsYourTurn: // case分子下是否需要return视功能而定
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.roundCount++
 				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("roundCount", self.roundCount).Msg("is your turn")
@@ -212,6 +220,30 @@ func (self *ScriptCtrl) Monitor(nextMonitorList []defs.RectType) {
 				}
 				DoHandleFight(self)
 				self.monitorFightProcess()
+				return
+			}
+		case defs.RectTypeFightWin:
+			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
+				self.fightWinCount++
+				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("fightWinCount", self.fightWinCount).Msg("fight win")
+				return
+			}
+		case defs.RectTypeFightFail:
+			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
+				self.fightFailCount++
+				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("fightFailCount", self.fightFailCount).Msg("fight fail")
+				return
+			}
+		case defs.RectTypeSettleWin:
+			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
+				self.settleWinCount++
+				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("settleWinCount", self.settleWinCount).Msg("final settle win")
+				return
+			}
+		case defs.RectTypeSettleFail:
+			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
+				self.settleFailCount++
+				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("settleFailCount", self.settleFailCount).Msg("final settle fail")
 				return
 			}
 			//case defs.RectTypeWinOrFail:

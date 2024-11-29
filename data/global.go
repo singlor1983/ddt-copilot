@@ -33,15 +33,19 @@ func InitGlobal() {
 	GGameSetting.Init()
 	GGameSetting.SetSettingFubenPosition()
 	GGameSetting.SetSettingFubenCustom(SettingFubenCustom{
-		name:              "custom",
-		Tp:                defs.FubenTypeNormal,
-		Page:              2,
-		Index:             5,
-		Lv:                defs.FubenLvNormal,
-		Angle:             65,
-		Power:             80,
-		Direction:         defs.DirectionRight,
-		IsBossFightEnable: false,
-		AttackCMD:         nil,
+		name:      "custom",
+		Angle:     65,
+		Power:     70,
+		Direction: defs.DirectionRight,
+		AttackCMD: nil,
+		FubenSetting: defs.FubenSetting{
+			Lv:                defs.FubenLvNormal,
+			IsBossFightEnable: false,
+			FubenPosition: defs.FubenPosition{
+				Type:  defs.FubenTypeNormal,
+				Page:  2,
+				Index: 5,
+			},
+		},
 	})
 }

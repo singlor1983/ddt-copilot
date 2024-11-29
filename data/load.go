@@ -41,7 +41,7 @@ func (self *DefsAngle) GetAngle(hwnd win.HWND) (int, error) {
 		if gray == nil {
 			continue
 		}
-		if utils.IsImageSimilarity(standard, gray, 0.9) {
+		if utils.IsImageSimilarity(standard, gray, 0.97) { // 不能太低、会识别混
 			return angle, nil
 		}
 	}

@@ -5,6 +5,7 @@ import (
 	"ddt-copilot/defs"
 	"ddt-copilot/utils"
 	"github.com/lxn/win"
+	"time"
 )
 
 func InFubenRoom(hwnd win.HWND) bool {
@@ -78,24 +79,24 @@ func EnterFubenRoom(hwnd win.HWND) {
 
 func ClickFubenStart(hwnd win.HWND) {
 	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("start fuben")
-	utils.ClickPointByType(hwnd, defs.PointFightStart, defs.TimeWaitLong)
+	utils.ClickPointByType(hwnd, defs.PointFightStart, defs.TimeWaitMid)
 }
 
 func ClickFubenStartAck(hwnd win.HWND) {
 	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("start fuben ack")
-	utils.ClickPointByType(hwnd, defs.PointFubenFightStartAck, defs.TimeWaitLong)
+	utils.ClickPointByType(hwnd, defs.PointFubenFightStartAck, defs.TimeWaitMid)
 }
 
 func SelectFubenMap(hwnd win.HWND, lv defs.FubenLv, isBossFight bool, position defs.FubenPosition) error {
 	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("click fuben select")
 	utils.ClickPointByType(hwnd, defs.PointFubenSelect, defs.TimeWaitMid)
 	// 先选择副本类型
-	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("click fuben type")
+	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Int("type", int(position.Type)).Msg("click fuben type")
 	switch position.Type {
 	case defs.FubenTypeSpecial:
 		utils.ClickPointByType(hwnd, defs.PointFubenTypeSpecial, defs.TimeWaitMid)
 	}
-	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("jump to page")
+	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Int("page", position.Page).Msg("jump to page")
 	// 跳转到副本指定页面
 	for i := 1; i < position.Page; i++ {
 		nextPageClickTimes := 8
@@ -106,10 +107,11 @@ func SelectFubenMap(hwnd win.HWND, lv defs.FubenLv, isBossFight bool, position d
 			utils.ClickPointByType(hwnd, defs.PointFubenPageDown, 0)
 		}
 	}
-	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("select fuben name")
+	time.Sleep(defs.TimeWaitMid)
+	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Int("index", int(position.Index)).Msg("select fuben name")
 	// 选择副本
 	utils.ClickRectByType(hwnd, position.Index, defs.TimeWaitMid)
-	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Msg("select fuben lv")
+	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Int("lv", int(lv)).Msg("select fuben lv")
 	// 选择难度
 	utils.SelectFubenLv(hwnd, data.GDefsFubenLv.GetStandard(lv))
 	// 确认选择

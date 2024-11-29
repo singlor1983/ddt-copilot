@@ -12,16 +12,13 @@ type SettingFubenPosition struct {
 }
 
 type SettingFubenCustom struct {
-	name              string
-	Tp                defs.FubenType
-	Page              int
-	Index             defs.RectType
-	Lv                defs.FubenLv
-	Angle             int
-	Power             int
-	Direction         defs.Direction // 攻击方向
-	IsBossFightEnable bool           // 是否启用boss战
-	AttackCMD         []string       // 战斗攻击指令
+	name      string
+	Angle     int
+	Power     int
+	Direction defs.Direction // 攻击方向
+	AttackCMD []string       // 战斗攻击指令
+
+	defs.FubenSetting
 }
 
 type GameSetting struct {
