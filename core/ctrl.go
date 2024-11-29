@@ -14,7 +14,7 @@ import (
 
 var (
 	monitorListFightProcess = []defs.RectType{
-		defs.RectTypeIsYourTurn,
+		defs.RectTypePassBtn,
 		defs.RectTypeSettleWin,
 		defs.RectTypeSettleFail,
 		defs.RectTypeFanCardSmall,
@@ -240,7 +240,7 @@ func (self *ScriptCtrl) monitor() {
 	for _, rectType := range monitorListFightProcess { // case的先后顺序有严格要求
 		standard := data.GDefsOther.GetStandard(rectType)
 		switch rectType {
-		case defs.RectTypeIsYourTurn: // case分子下是否需要return视功能而定，Todo 第一回合总是识别不到？
+		case defs.RectTypePassBtn: // case分子下是否需要return视功能而定，Todo 第一回合总是识别不到？
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.roundCount++
 				self.logger().Int("roundCount", self.roundCount).Msg("is your turn")
@@ -286,7 +286,7 @@ func (self *ScriptCtrl) monitor() {
 			}
 		}
 	}
-	time.Sleep(time.Millisecond * 700)
+	time.Sleep(time.Second)
 	self.monitor()
 }
 
@@ -303,23 +303,15 @@ func (self *ScriptCtrl) runFuben() {
 		// 等待主号开启副本战斗之后就行了
 	} else {
 		// 主号只支持在特定场景下开启脚本，没必要考虑到所有的场景情况
-		switch true {
-		case InJinRoom(self.hwnd) || InJinjiHall(self.hwnd):
+		if InJinRoom(self.hwnd) || InJinjiHall(self.hwnd) {
 			BackToIndexPage(self.hwnd)
-			EnterFubenHall(self.hwnd)
-			EnterFubenRoom(self.hwnd)
-		case InIndexPage(self.hwnd):
-			EnterFubenHall(self.hwnd)
-			EnterFubenRoom(self.hwnd)
-		case InFubenHall(self.hwnd):
-			EnterFubenRoom(self.hwnd)
-		case InFubenRoom(self.hwnd):
-		//case IsFubenFight(): Todo zhangzhihui 开启脚本时正在战斗内
-		default:
-			panic(fmt.Sprintf("不支持在当前场景下开启脚本. hwnd:%d", self.hwnd))
 		}
-		// 经过上面的步骤已经进入副本房间内了
-		self.EnterFubenOnce(true)
+		if InIndexPage(self.hwnd) {
+			EnterFubenHall(self.hwnd)
+		}
+		if InFubenHall(self.hwnd) {
+			EnterFubenRoom(self.hwnd)
+		}
 		self.monitor()
 	}
 }
