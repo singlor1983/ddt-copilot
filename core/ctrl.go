@@ -135,7 +135,7 @@ func (self *ScriptCtrl) tryReady() {
 	self.logger().Msg("set ready ok")
 }
 
-func (self *ScriptCtrl) GetFubenPosition() defs.FubenSetting {
+func (self *ScriptCtrl) GetFubenSetting() defs.FubenSetting {
 	lv := self.lv
 	isBossFight := self.isBossFight
 	position := data.GGameSetting.SettingFubenPosition.Position[self.id]
@@ -156,7 +156,7 @@ func (self *ScriptCtrl) GetFubenPosition() defs.FubenSetting {
 }
 
 func (self *ScriptCtrl) SelectFubenMap() {
-	setting := self.GetFubenPosition()
+	setting := self.GetFubenSetting()
 	if err := SelectFubenMap(self.hwnd, setting.Lv, setting.IsBossFightEnable, setting.FubenPosition); err != nil {
 		panic(err)
 	}
@@ -232,8 +232,9 @@ func (self *ScriptCtrl) EnterFubenOnce(needSelectFuben bool) {
 }
 
 func (self *ScriptCtrl) logger() *zerolog.Event {
+	setting := self.GetFubenSetting()
 	return data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("id", int(self.id)).
-		Int("lv", int(self.lv)).Bool("isChild", self.isChild).Bool("isBossFight", self.isBossFight).
+		Int("lv", int(setting.Lv)).Bool("isChild", self.isChild).Bool("isBossFight", setting.IsBossFightEnable).
 		Int("masterHWND", int(self.masterHWND))
 }
 
@@ -242,15 +243,16 @@ func (self *ScriptCtrl) monitor() {
 	for _, rectType := range monitorListFightProcess { // case的先后顺序有严格要求
 		standard := data.GDefsOther.GetStandard(rectType)
 		switch rectType {
-		case defs.RectTypePassBtn: // case分子下是否需要return视功能而定，Todo 第一回合总是识别不到？
-			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
+		case defs.RectTypePassBtn: // case分子下是否需要return视功能而定
+			//  Todo 可能重复进入这个分支导致roundCount统计不对 需要设置标记，在标记内不检查这个
+			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.6, true) { // passBtn可能被会背景覆盖的导致相似度降低，把这个阈值降低把
 				self.roundCount++
 				self.logger().Int("roundCount", self.roundCount).Msg("is your turn")
 				if self.roundCount == 1 {
 					DoHandleFirstRoundInit(self)
 				}
 				DoHandleFight(self)
-				time.Sleep(time.Second)
+				time.Sleep(time.Second * 3)
 			}
 		case defs.RectTypeSettleWin: // 最终关胜利-小关没有
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
@@ -278,13 +280,13 @@ func (self *ScriptCtrl) monitor() {
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.logger().Msg("next select fuben and start")
 				self.EnterFubenOnce(true)
-				time.Sleep(time.Second)
+				time.Sleep(time.Second * 3)
 			}
 		case defs.RectTypeFubenInviteAndChangeTeam:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.logger().Msg("next direct start fuben")
 				self.EnterFubenOnce(false)
-				time.Sleep(time.Second)
+				time.Sleep(time.Second * 3)
 			}
 		}
 	}

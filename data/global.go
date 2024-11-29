@@ -44,7 +44,7 @@ func InitGlobal() {
 		Direction: defs.DirectionRight,
 		AttackCMD: nil,
 		FubenSetting: defs.FubenSetting{
-			Lv:                defs.FubenLvNormal,
+			Lv:                defs.FubenLvDifficulty,
 			IsBossFightEnable: false,
 			FubenPosition: defs.FubenPosition{
 				Type:  defs.FubenTypeNormal,
