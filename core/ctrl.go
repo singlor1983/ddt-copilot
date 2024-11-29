@@ -6,6 +6,7 @@ import (
 	"ddt-copilot/utils"
 	"fmt"
 	"github.com/lxn/win"
+	"github.com/rs/zerolog"
 	"runtime/debug"
 	"sync"
 	"time"
@@ -127,7 +128,7 @@ func (self *ScriptCtrl) tryReady() {
 	utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointFightStart), defs.TimeWaitShort)
 	// 设置状态
 	self.SetReadyState(defs.ReadyStateOK)
-	data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Msg("set ready ok")
+	self.logger().Msg("set ready ok")
 }
 
 func (self *ScriptCtrl) GetFubenPosition() defs.FubenSetting {
@@ -167,7 +168,7 @@ func (self *ScriptCtrl) waitChildReady() {
 		return
 	}
 	for {
-		data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Msg("check child ready")
+		self.logger().Msg("check child ready")
 		allReady := true
 		for child := range self.childs {
 			ctrl := InstanceMgr().GetCtrl(child)
@@ -176,12 +177,12 @@ func (self *ScriptCtrl) waitChildReady() {
 			}
 			if ctrl.readyState != defs.ReadyStateOK {
 				allReady = false
-				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("child", int(ctrl.hwnd)).Msg("child not ready")
+				self.logger().Int("child", int(ctrl.hwnd)).Msg("child not ready")
 				break
 			}
 		}
 		if allReady {
-			data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Msg("all child ready")
+			self.logger().Msg("all child ready")
 			return
 		}
 		time.Sleep(time.Second) // 一秒检查一次
@@ -205,16 +206,22 @@ func (self *ScriptCtrl) EnterFubenOnce(needSelectFuben bool) {
 	self.StartFuben()
 }
 
+func (self *ScriptCtrl) logger() *zerolog.Event {
+	return data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("id", int(self.id)).
+		Int("lv", int(self.lv)).Bool("isChild", self.isChild).Bool("isBossFight", self.isBossFight).
+		Int("masterHWND", int(self.masterHWND))
+}
+
 func (self *ScriptCtrl) Monitor(nextMonitorList []defs.RectType) {
-	time.Sleep(time.Second)
-	data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Interface("nextMonitorList", nextMonitorList).Msg("monitor")
+	time.Sleep(time.Millisecond * 700)
+	self.logger().Interface("nextMonitorList", nextMonitorList).Msg("monitor")
 	for _, rectType := range nextMonitorList { // case的先后顺序有严格要求
 		standard := data.GDefsOther.GetStandard(rectType)
 		switch rectType {
-		case defs.RectTypeIsYourTurn: // case分子下是否需要return视功能而定
+		case defs.RectTypeIsYourTurn: // case分子下是否需要return视功能而定，Todo 第一回合总是识别不到？
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.roundCount++
-				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("roundCount", self.roundCount).Msg("is your turn")
+				self.logger().Int("roundCount", self.roundCount).Msg("is your turn")
 				if self.roundCount == 1 {
 					DoHandleFirstRoundInit(self)
 				}
@@ -225,25 +232,25 @@ func (self *ScriptCtrl) Monitor(nextMonitorList []defs.RectType) {
 		case defs.RectTypeFightWin:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.fightWinCount++
-				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("fightWinCount", self.fightWinCount).Msg("fight win")
+				self.logger().Int("fightWinCount", self.fightWinCount).Msg("fight win")
 				return
 			}
 		case defs.RectTypeFightFail:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.fightFailCount++
-				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("fightFailCount", self.fightFailCount).Msg("fight fail")
+				self.logger().Int("fightFailCount", self.fightFailCount).Msg("fight fail")
 				return
 			}
 		case defs.RectTypeSettleWin:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.settleWinCount++
-				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("settleWinCount", self.settleWinCount).Msg("final settle win")
+				self.logger().Int("settleWinCount", self.settleWinCount).Msg("final settle win")
 				return
 			}
 		case defs.RectTypeSettleFail:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.settleFailCount++
-				data.Log().Info().Timestamp().Int("hwnd", int(self.hwnd)).Int("settleFailCount", self.settleFailCount).Msg("final settle fail")
+				self.logger().Int("settleFailCount", self.settleFailCount).Msg("final settle fail")
 				return
 			}
 			//case defs.RectTypeWinOrFail:

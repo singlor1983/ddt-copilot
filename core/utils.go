@@ -107,7 +107,7 @@ func SelectFubenMap(hwnd win.HWND, lv defs.FubenLv, isBossFight bool, position d
 			utils.ClickPointByType(hwnd, defs.PointFubenPageDown, 0)
 		}
 	}
-	time.Sleep(defs.TimeWaitMid)
+	time.Sleep(defs.TimeWaitMid) // 避免观感上选择难度和选择副本是同时选择的
 	data.Log().Info().Timestamp().Int("hwnd", int(hwnd)).Int("index", int(position.Index)).Msg("select fuben name")
 	// 选择副本
 	utils.ClickRectByType(hwnd, position.Index, defs.TimeWaitMid)
