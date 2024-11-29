@@ -343,6 +343,8 @@ var elementRect = map[RectType]*Rect{
 	RectTypeJinjiFightLoading:         RectFightLoading,
 	RectTypeFubenFightSettle:          RectFubenFightSettle,
 	RectTypeJinjiFightSettle:          RectJinjiFightSettle,
+	RectTypeFanCardBoss:               RectFubenFightSettle,
+	RectTypeFanCardSmall:              RectJinjiFightSettle,
 }
 
 func GetWinRect(tp RectType) *win.RECT {

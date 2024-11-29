@@ -160,8 +160,18 @@ func (self *ScriptCtrl) SelectFubenMap() {
 	}
 }
 
+func (self *ScriptCtrl) tryUsePetFood() {
+	count := data.GGameSetting.UsePetFoodByFightCount
+	if count <= 0 {
+		return
+	}
+	if self.fightCount > 0 && self.fightCount%count == 0 { // 每count局使用一次宠物粮食
+
+	}
+}
+
 func (self *ScriptCtrl) OnBeforeStartFuben() {
-	// Todo zhangzhihi 还有个通用before，比如喂宠物粮
+	self.tryUsePetFood()
 	DoHandleBeforeStart(self)
 }
 
@@ -195,6 +205,7 @@ func (self *ScriptCtrl) StartFuben() {
 	self.waitChildReady()
 	self.fightCount++   // 重新启动脚本自然会重置【重启脚本需要重新初始化ScriptCtrl】
 	self.roundCount = 0 // 每次新开战斗要重置回合次数
+	self.OnBeforeStartFuben()
 	ClickFubenStart(self.hwnd)
 	ClickFubenStartAck(self.hwnd) // 多人战斗的时候没有确认框，但是点击一下也不影响
 	self.logger().Int("fightCount", self.fightCount).Msg("start fuben enter fight")
@@ -205,7 +216,6 @@ func (self *ScriptCtrl) EnterFubenOnce(needSelectFuben bool) {
 	if needSelectFuben { // 多关卡的是不需要再次选择副本的,实际上点击一次也没关系，没有选项
 		self.SelectFubenMap()
 	}
-	self.OnBeforeStartFuben()
 	self.StartFuben()
 }
 

@@ -3,8 +3,9 @@ package data
 import "ddt-copilot/defs"
 
 type SettingGeneral struct {
-	IsBossFightEnable bool     // 是否启用boss战
-	AttackCMD         []string // 战斗攻击指令
+	IsBossFightEnable      bool     // 是否启用boss战
+	AttackCMD              []string // 战斗攻击指令
+	UsePetFoodByFightCount int      // 多少局使用1个宠物粮食【宠物粮食放背包第一个】
 }
 
 type SettingFubenPosition struct {
