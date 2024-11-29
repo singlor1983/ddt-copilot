@@ -44,6 +44,7 @@ const (
 	PointBackpackIndex1         ElementPoint = 28 // 背包中的第一个道具
 	PointBackpackPetFoodPutDown ElementPoint = 29 // 背包中的宠物页签按钮中放宠物粮的位置
 	PointBackpackPetFoodEat     ElementPoint = 30 // 背包中的宠物页签按钮中吃宠物粮的位置
+	PointBackpackPetFoodEatAck  ElementPoint = 31 // 背包中的宠物页签按钮中确认吃宠物粮按钮
 )
 
 // pointMap 可点击元素中心相对于左上角顶点的坐标
@@ -79,6 +80,7 @@ var pointMap = map[ElementPoint]Point{
 	PointBackpackIndex1:         {557, 176},
 	PointBackpackPetFoodPutDown: {302, 342},
 	PointBackpackPetFoodEat:     {302, 385},
+	PointBackpackPetFoodEatAck:  {400, 380},
 }
 
 func GetPoint(element ElementPoint) Point {

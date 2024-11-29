@@ -175,6 +175,8 @@ func (self *ScriptCtrl) tryUsePetFood() {
 		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackItem), defs.TimeWaitMid)
 		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackIndex1), defs.TimeWaitMid)
 		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPetFoodPutDown), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPetFoodPutDown), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPetFoodEatAck), defs.TimeWaitMid)
 		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPetFoodEat), defs.TimeWaitMid)
 		utils.FocusDDTWindow(self.hwnd, true)
 	}
