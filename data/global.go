@@ -34,8 +34,8 @@ func InitGlobal() {
 	GGameSetting.SetSettingFubenPosition()
 	GGameSetting.SetSettingFubenCustom(SettingFubenCustom{
 		name:      "custom",
-		Angle:     65,
-		Power:     70,
+		Angle:     50,
+		Power:     80,
 		Direction: defs.DirectionRight,
 		AttackCMD: nil,
 		FubenSetting: defs.FubenSetting{

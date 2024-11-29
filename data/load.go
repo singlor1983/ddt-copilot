@@ -118,6 +118,8 @@ func (self *DefsOther) Init() {
 	self.load(defs.RectTypeJinjiFightLoading, "fl2", items)
 	self.load(defs.RectTypeFubenFightSettle, "ffs", items)
 	self.load(defs.RectTypeJinjiFightSettle, "jfs", items)
+	self.load(defs.RectTypeFanCardBoss, "ffs", items)
+	self.load(defs.RectTypeFanCardSmall, "jfs", items)
 	self.load(defs.RectTypeBack, "back", items)
 	self.load(defs.RectTypeExit, "exit", items)
 	self.load(defs.RectTypeIndexPage, "index", items)

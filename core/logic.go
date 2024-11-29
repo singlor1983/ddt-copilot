@@ -49,6 +49,8 @@ func Launch(hwnd win.HWND, needAngle, power int) {
 }
 
 func OnBattleCustom(ctrl *ScriptCtrl) {
+	utils.Move(ctrl.hwnd, defs.DirectionLeft, 20) // Todo delete
+
 	utils.ConfirmDirection(ctrl.hwnd, data.GGameSetting.SettingFubenCustom.Direction)
 
 	attackCmd := data.GGameSetting.SettingFubenCustom.AttackCMD
