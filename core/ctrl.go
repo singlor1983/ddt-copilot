@@ -19,15 +19,17 @@ var (
 		defs.RectTypeSettleFail,
 		defs.RectTypeFanCardSmall,
 		defs.RectTypeFanCardBoss,
-	}
-	monitorListFubenFanCard = []defs.RectType{
-		defs.RectTypeFanCardSmall,
-		defs.RectTypeFanCardBoss,
-	}
-	monitorListFubenRoom = []defs.RectType{
 		defs.RectTypeFubenSelectText,
 		defs.RectTypeFubenInviteAndChangeTeam,
 	}
+	//monitorListFubenFanCard = []defs.RectType{
+	//	defs.RectTypeFanCardSmall,
+	//	defs.RectTypeFanCardBoss,
+	//}
+	//monitorListFubenRoom = []defs.RectType{
+	//	defs.RectTypeFubenSelectText,
+	//	defs.RectTypeFubenInviteAndChangeTeam,
+	//}
 )
 
 type ScriptCtrl struct {
@@ -166,7 +168,15 @@ func (self *ScriptCtrl) tryUsePetFood() {
 		return
 	}
 	if self.fightCount > 0 && self.fightCount%count == 0 { // 每count局使用一次宠物粮食
-
+		self.logger().Int("fightCount", self.fightCount).Msg("eat pet food")
+		utils.FocusDDTWindow(self.hwnd, true)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpack), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPet), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackItem), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackIndex1), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPetFoodPutDown), defs.TimeWaitMid)
+		utils.ClickPoint(self.hwnd, defs.GetPoint(defs.PointBackpackPetFoodEat), defs.TimeWaitMid)
+		utils.FocusDDTWindow(self.hwnd, true)
 	}
 }
 
@@ -202,10 +212,10 @@ func (self *ScriptCtrl) waitChildReady() {
 }
 
 func (self *ScriptCtrl) StartFuben() {
+	self.OnBeforeStartFuben()
 	self.waitChildReady()
 	self.fightCount++   // 重新启动脚本自然会重置【重启脚本需要重新初始化ScriptCtrl】
 	self.roundCount = 0 // 每次新开战斗要重置回合次数
-	self.OnBeforeStartFuben()
 	ClickFubenStart(self.hwnd)
 	ClickFubenStartAck(self.hwnd) // 多人战斗的时候没有确认框，但是点击一下也不影响
 	self.logger().Int("fightCount", self.fightCount).Msg("start fuben enter fight")
@@ -225,10 +235,9 @@ func (self *ScriptCtrl) logger() *zerolog.Event {
 		Int("masterHWND", int(self.masterHWND))
 }
 
-func (self *ScriptCtrl) monitor(nextMonitorList []defs.RectType) {
-	time.Sleep(time.Millisecond * 700)
-	self.logger().Interface("nextMonitorList", nextMonitorList).Msg("monitor")
-	for _, rectType := range nextMonitorList { // case的先后顺序有严格要求
+func (self *ScriptCtrl) monitor() {
+	self.logger().Msg("monitor")
+	for _, rectType := range monitorListFightProcess { // case的先后顺序有严格要求
 		standard := data.GDefsOther.GetStandard(rectType)
 		switch rectType {
 		case defs.RectTypeIsYourTurn: // case分子下是否需要return视功能而定，Todo 第一回合总是识别不到？
@@ -239,52 +248,46 @@ func (self *ScriptCtrl) monitor(nextMonitorList []defs.RectType) {
 					DoHandleFirstRoundInit(self)
 				}
 				DoHandleFight(self)
-				self.monitor(monitorListFightProcess)
-				return
+				time.Sleep(time.Second)
 			}
 		case defs.RectTypeSettleWin: // 最终关胜利-小关没有
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.settleWinCount++
 				self.logger().Int("settleWinCount", self.settleWinCount).Msg("final settle win")
-				self.monitor(monitorListFubenFanCard)
-				return
+				time.Sleep(time.Second * 3)
 			}
 		case defs.RectTypeSettleFail: // 最终关失败-小关没有
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.settleFailCount++
 				self.logger().Int("settleFailCount", self.settleFailCount).Msg("final settle fail")
-				self.monitor(monitorListFubenRoom)
-				return
+				time.Sleep(time.Second * 3)
 			}
 		case defs.RectTypeFanCardSmall: // Todo 执行翻牌操作
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.logger().Msg("fan card small")
-				self.monitor(monitorListFubenRoom)
-				return
+				time.Sleep(time.Second * 18)
 			}
 		case defs.RectTypeFanCardBoss: // Todo 执行翻牌操作
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.logger().Msg("fan card boss")
-				self.monitor(monitorListFubenRoom)
-				return
+				time.Sleep(time.Second * 18)
 			}
 		case defs.RectTypeFubenSelectText:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.logger().Msg("next select fuben and start")
 				self.EnterFubenOnce(true)
-				self.monitor(monitorListFightProcess)
-				return
+				time.Sleep(time.Second)
 			}
 		case defs.RectTypeFubenInviteAndChangeTeam:
 			if utils.IsSimilarity(self.hwnd, standard, rectType, 0.8, true) {
 				self.logger().Msg("next direct start fuben")
 				self.EnterFubenOnce(false)
-				self.monitor(monitorListFightProcess)
-				return
+				time.Sleep(time.Second)
 			}
 		}
 	}
-	self.monitor(nextMonitorList)
+	time.Sleep(time.Millisecond * 700)
+	self.monitor()
 }
 
 func (self *ScriptCtrl) runFuben() {
@@ -317,7 +320,7 @@ func (self *ScriptCtrl) runFuben() {
 		}
 		// 经过上面的步骤已经进入副本房间内了
 		self.EnterFubenOnce(true)
-		self.monitor(monitorListFightProcess)
+		self.monitor()
 	}
 }
 

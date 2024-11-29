@@ -31,6 +31,11 @@ func InitGlobal() {
 
 	GGameSetting = &GameSetting{}
 	GGameSetting.Init()
+	GGameSetting.SetSettingGeneral(SettingGeneral{
+		IsBossFightEnable:      true,
+		AttackCMD:              nil,
+		UsePetFoodByFightCount: 1,
+	})
 	GGameSetting.SetSettingFubenPosition()
 	GGameSetting.SetSettingFubenCustom(SettingFubenCustom{
 		name:      "custom",

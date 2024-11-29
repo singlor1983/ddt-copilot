@@ -31,6 +31,10 @@ type GameSetting struct {
 func (self *GameSetting) Init() {
 }
 
+func (self *GameSetting) SetSettingGeneral(st SettingGeneral) {
+	self.SettingGeneral = st
+}
+
 func (self *GameSetting) SetSettingFubenPosition() {
 	self.SettingFubenPosition.Position = map[defs.FunctionID]defs.FubenPosition{
 		defs.FunctionIDMaYiGeneral: {Type: defs.FubenTypeNormal, Page: 1, Index: 1},
