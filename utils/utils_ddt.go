@@ -30,7 +30,7 @@ func GetDDTHwnds() []win.HWND {
 func FocusDDTWindow(hwnd win.HWND, dropBlock bool) {
 	ClickPointByType(hwnd, defs.PointEmpty, 0) // 激活窗口，便于截图为亮色的
 	if dropBlock {                             // 副本选择页面不能删除遮挡，因为这本身就是遮挡
-		for i := 0; i < 5; i++ { // 截屏之前用ESC把其他遮挡界面关闭，避免影响判断，5次是因为可能有多层折叠
+		for i := 0; i < 3; i++ { // 截屏之前用ESC把其他遮挡界面关闭，避免影响判断，5次是因为可能有多层折叠
 			KeyBoard(hwnd, defs.VK_ESCAPE, 0)
 		}
 	}
